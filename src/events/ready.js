@@ -1,3 +1,5 @@
+import { getServersInfo } from '../handler/index.js';
+
 export default {
 	once: true,
 	execute(client) {
@@ -9,5 +11,7 @@ export default {
 		});
 
 		console.log(`Ready! Logged in as ${client.user.tag}`);
+
+		getServersInfo(client);
 	},
 };
