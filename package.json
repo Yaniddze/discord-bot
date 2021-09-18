@@ -1,0 +1,25 @@
+{
+	"name": "discord-bot",
+	"version": "1.0.0",
+	"description": "Bot for the game messenger Discord.",
+	"main": "src/index.js",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "node src/index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vadimpashkov/discord-bot.git"
+	},
+	"author": "Vadim Pashkov <vadimpashkov.job@gmail.com> (https://github.com/vadimpashkov)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/vadimpashkov/discord-bot/issues"
+	},
+	"homepage": "https://github.com/vadimpashkov/discord-bot#readme",
+	"dependencies": {
+		"discord.js": "^13.1.0",
+		"dotenv": "^10.0.0"
+	}
+}
