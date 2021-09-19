@@ -4,7 +4,7 @@ import { Client, Intents } from 'discord.js';
 import { connectingEvents } from './handler/index.js';
 
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS],
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES],
 });
 
 client.config = {
