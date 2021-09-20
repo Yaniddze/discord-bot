@@ -1,4 +1,4 @@
-import { getServersInfo } from '../handler/index.js';
+import { registeringCommands, getServersInfo } from '../handler/index.js';
 
 export default {
 	once: true,
@@ -13,5 +13,6 @@ export default {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
 		getServersInfo(client);
+		registeringCommands(client);
 	},
 };

@@ -10,6 +10,7 @@ const client = new Client({
 client.config = {
 	id: process.env.BOTID,
 	token: process.env.BOTTOKEN,
+	guildTestId: process.env.GUILDTESTID,
 };
 
 client.commands = new Collection();
