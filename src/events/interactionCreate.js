@@ -24,5 +24,9 @@ export default {
 		if (interaction.isCommand()) {
 			return interactionExecute(client, interaction, 'commands', 'commandName');
 		}
+
+		if (interaction.isButton()) {
+			return interactionExecute(client, interaction, 'buttons');
+		}
 	},
 };
