@@ -1,7 +1,7 @@
 import 'dotenv/config.js';
 import { Client, Intents, Collection } from 'discord.js';
 
-import { connectingCommands, connectingEvents } from './handler/index.js';
+import { connectingInteraction, connectingEvents } from './handler/index.js';
 
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES],
@@ -26,7 +26,7 @@ client.guildUserChannels = new Collection();
 
 client.commands = new Collection();
 
-connectingCommands(client);
+connectingInteraction(client, 'commands', 'name');
 connectingEvents(client);
 
 client.login(client.config.token);
