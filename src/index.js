@@ -26,9 +26,11 @@ client.guildUserChannels = new Collection();
 
 client.commands = new Collection();
 client.buttons = new Collection();
+client.selectMenu = new Collection();
 
 connectingInteraction(client, 'commands', 'name');
 connectingInteraction(client, 'buttons');
+connectingInteraction(client, 'selectMenu');
 connectingEvents(client);
 
 client.login(client.config.token);

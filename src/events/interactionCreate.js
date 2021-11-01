@@ -28,5 +28,9 @@ export default {
 		if (interaction.isButton()) {
 			return interactionExecute(client, interaction, 'buttons');
 		}
+
+		if (interaction.isSelectMenu()) {
+			return interactionExecute(client, interaction, 'selectMenu');
+		}
 	},
 };
