@@ -1,20 +1,28 @@
+/**
+ * @param {String} typeInteraction
+ * @param {String} identificationField
+ */
+async function interactionExecute(client, interaction, typeInteraction, identificationField = 'customId') {
+	const interactionId = interaction[identificationField];
+
+	if (!client[typeInteraction].has(interactionId)) return;
+
+	try {
+		await client[typeInteraction].get(interactionId).execute(client, interaction);
+	} catch (err) {
+		console.error(err);
+
+		return interaction.reply({
+			content: `${client.emoji.statusError} При выполнении произошла ошибка`,
+			ephemeral: true,
+		});
+	}
+}
+
 export default {
 	async execute(client, interaction) {
 		if (interaction.isCommand()) {
-			const { commandName } = interaction;
-
-			if (!client.commands.has(commandName)) return;
-
-			try {
-				await client.commands.get(commandName).execute(client, interaction);
-			} catch (err) {
-				console.error(err);
-
-				return interaction.reply({
-					content: `${client.emoji.statusError} При выполнении команды произошла ошибка`,
-					ephemeral: true,
-				});
-			}
+			return interactionExecute(client, interaction, 'commands', 'commandName');
 		}
 	},
 };
