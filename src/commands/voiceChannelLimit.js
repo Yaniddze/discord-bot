@@ -1,76 +1,69 @@
-import { Constants } from 'discord.js';
-import { pool } from '../database.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 export default {
-	data: {
-		name: 'voice-channel-limit',
-		description: 'Установить лимит пользователей для голосового канала',
-		options: [
-			{
-				name: 'limit',
-				description: 'Количество пользователей',
-				required: true,
-				type: Constants.ApplicationCommandOptionTypes.INTEGER,
-			},
-		],
-	},
-	async execute(interaction) {
+	data: new SlashCommandBuilder()
+		.setName('voice-channel-limit')
+		.setDescription('Установить лимит пользователей для частного голосового канала')
+		.addIntegerOption((option) =>
+			option.setName('limit').setDescription('Количество пользователей').setRequired(true),
+		),
+	async execute(client, interaction) {
 		try {
-			const userHasAdmin = await interaction.member.permissions.has('ADMINISTRATOR');
+			const userHasAdmin = interaction.member.permissions.has('ADMINISTRATOR');
+			const targetChannel = interaction.member.voice;
 
-			if (!interaction.member.voice.channelId) {
-				const messageError = userHasAdmin ? 'Войдите в голосовой канал' : 'Создайте свой голосовой канал';
+			if (!targetChannel.channelId) {
 				return await interaction.reply({
-					content: `⛔ ${messageError}`,
+					content: `${client.emoji.usageError} Создайте частный голосовой канал`,
 					ephemeral: true,
 				});
 			}
 
-			const userLimit = {
-				min: userHasAdmin ? 0 : 2,
-				max: userHasAdmin ? 99 : 30,
-				now: await interaction.member.voice.channel.userLimit,
-				new: await interaction.options.getInteger('limit'),
-			};
-
 			if (!userHasAdmin) {
-				const {
-					rows: [{ exists: userChannel }],
-				} = await pool.query('SELECT EXISTS(SELECT FROM "userChannels" WHERE "userId" = $1)', [
-					interaction.user.id,
-				]);
+				const isUserChannel = client.guildUserChannels.has(interaction.user.id);
 
-				if (!userChannel) {
+				if (!isUserChannel) {
 					return await interaction.reply({
-						content: '⛔ Вы не можете использовать данную команду',
+						content: `${client.emoji.usageError} Вы не являетесь владельцем голосовой канала`,
 						ephemeral: true,
 					});
 				}
 			}
 
+			const userLimit = {
+				min: userHasAdmin ? 0 : 2,
+				max: userHasAdmin ? 1000 : 30,
+				now: await targetChannel.channel.userLimit,
+				new: await interaction.options.getInteger('limit'),
+			};
+
 			if (userLimit.now === userLimit.new) {
 				return await interaction.reply({
-					content: `❓ Зачем менять лимит пользователей голосового канала на идентичное`,
+					content: `${client.emoji.usageQuestion} Зачем менять лимит пользователей голосового канала на идентичное`,
 					ephemeral: true,
 				});
 			}
 
 			if (userLimit.new < userLimit.min || userLimit.new > userLimit.max) {
 				return await interaction.reply({
-					content: `⛔ Укажите диапазон от ${userLimit.min} до ${userLimit.max} пользователей`,
+					content: `${client.emoji.usageError} Укажите диапазон от ${userLimit.min} до ${userLimit.max} пользователей`,
 					ephemeral: true,
 				});
 			}
 
-			await interaction.member.voice.channel.setUserLimit(userLimit.new);
+			await targetChannel.channel.setUserLimit(userLimit.new > 99 ? 0 : userLimit.new);
 
 			return await interaction.reply({
-				content: `✅ Лимит пользователей голосового канала изменен`,
+				content: `${client.emoji.usageSuccessful} Лимит пользователей голосового канала изменен`,
 				ephemeral: true,
 			});
 		} catch (err) {
 			console.error(err);
-			return await interaction.reply({ content: '⚠️ При выполнении команды произошла ошибка', ephemeral: true });
+
+			return await interaction.reply({
+				content: `${client.emoji.statusError} При выполнении команды произошла ошибка`,
+				ephemeral: true,
+			});
 		}
 	},
 };

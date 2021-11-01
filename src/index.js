@@ -8,10 +8,21 @@ const client = new Client({
 });
 
 client.config = {
-	id: process.env.BOTID,
 	token: process.env.BOTTOKEN,
-	guildTestId: process.env.GUILDTESTID,
+	guildId: process.env.GUILDID,
+	mainRoleId: process.env.MAINROLEID,
+	mainColor: '',
 };
+
+client.emoji = {
+	statusError: '⚠️',
+	usageSuccessful: '✅',
+	usageError: '⛔',
+	usageQuestion: '❓',
+};
+
+client.guildChannels = new Collection();
+client.guildUserChannels = new Collection();
 
 client.commands = new Collection();
 

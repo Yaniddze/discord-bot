@@ -1,31 +1,18 @@
-import { pool } from '../database.js';
+export const getServersInfo = (client) => {
+	const guilds = client.guilds.cache;
 
-export const getServersInfo = async (client) => {
-	try {
-		await pool.query('TRUNCATE "guilds" RESTART IDENTITY CASCADE');
+	guilds.map((guild) => {
+		const guildChannels = guild.channels.cache;
 
-		const guilds = await client.guilds.cache;
-
-		await guilds.map(async (guild) => {
-			const guildChannels = await guild.channels.cache;
-
-			await pool.query('INSERT INTO "guilds" ("id", "afkChannel") VALUES ($1, $2)', [
-				guild.id,
-				guild.afkChannelId,
-			]);
-
-			await guildChannels.map(async (channel) => {
-				if (channel.type !== 'GUILD_CATEGORY') {
-					const channelCreate = channel.bitrate === 8000 ? true : false;
-
-					await pool.query(
-						'INSERT INTO "channels" ("id", "guildId", "type", "categoryId", "button") VALUES ($1, $2, $3, $4, $5)',
-						[channel.id, guild.id, channel.type, channel.parentId, channelCreate],
-					);
-				}
-			});
+		guildChannels.map((channel) => {
+			if (channel.type !== 'GUILD_CATEGORY' && channel.type !== 'GUILD_NEWS') {
+				client.guildChannels.set(channel.id, {
+					id: channel.id,
+					type: channel.type,
+					parent: channel.parentId,
+					isInteractionChannel: channel.bitrate === 8000 ? true : false,
+				});
+			}
 		});
-	} catch (err) {
-		console.error(err);
-	}
+	});
 };
