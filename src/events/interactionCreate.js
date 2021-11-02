@@ -1,3 +1,4 @@
+import { availableEmoji } from '../utils/emoji';
 /**
  * @param {String} typeInteraction
  * @param {String} identificationField
@@ -13,7 +14,7 @@ async function interactionExecute(client, interaction, typeInteraction, identifi
 		console.error(err);
 
 		return interaction.reply({
-			content: `${client.emoji.statusError} При выполнении произошла ошибка`,
+			content: `${availableEmoji.statusError} При выполнении произошла ошибка`,
 			ephemeral: true,
 		});
 	}

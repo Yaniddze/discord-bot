@@ -1,9 +1,11 @@
 import glob from 'glob';
+import { baseExecute } from './baseExecute';
 
 /**
  * @param {String} typeInteraction
  * @param {String} identificationField
  */
+
 export const connectingInteraction = (client, typeInteraction, identificationField = 'customId') => {
 	glob(`./src/${typeInteraction}/**/*.js`, (err, files) => {
 		if (err) {
@@ -11,9 +13,12 @@ export const connectingInteraction = (client, typeInteraction, identificationFie
 		}
 
 		files.map(async (file) => {
-			const { default: interaction } = await import(`../../${file}`);
+			const interaction = await import(`../../${file}`);
 
-			client[typeInteraction].set(interaction.data[identificationField], interaction);
+			client[typeInteraction].set(interaction.data[identificationField], {
+				...interaction,
+				execute: baseExecute(interaction.execute),
+			});
 		});
 	});
 };

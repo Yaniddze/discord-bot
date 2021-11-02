@@ -14,13 +14,6 @@ client.config = {
 	mainColor: '',
 };
 
-client.emoji = {
-	statusError: '⚠️',
-	usageSuccessful: '✅',
-	usageError: '⛔',
-	usageQuestion: '❓',
-};
-
 client.guildChannels = new Collection();
 client.guildUserChannels = new Collection();
 
